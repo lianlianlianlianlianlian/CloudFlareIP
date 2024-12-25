@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import ipaddress
 
 # 自定义目录和文件路径参数
-output_directory = "./COLO"  # 自定义目录，存储机场的 IP 地址文件
+output_directory = "./Colo"  # 自定义目录，存储机场的 IP 地址文件
 progress_file = "progress.json"  # 进度文件路径
 
 # 如果目录不存在，则创建目录
@@ -55,8 +55,8 @@ ip_to_colo = progress.get("ip_to_colo", {})
 # 从 IP 地址列表中去除已处理的 IP
 remaining_ips = [ip for ip in selected_ips if ip not in ip_to_colo]
 
-# 存储访问失败的 IP 地址和失败次数
-failed_ips = []
+# 获取失败的 IP 地址
+failed_ips = progress.get("failed_ips", [])
 
 # 更新 IP 的机场代码
 def update_ip_colo(ip, new_colo_value):
@@ -113,6 +113,7 @@ for batch_num in range(num_batches):
 
     # 每次批次处理结束时保存进度
     progress["ip_to_colo"] = ip_to_colo
+    progress["failed_ips"] = failed_ips  # 保存失败的 IP
     save_progress(progress)
 
     # 批次处理结束时输出当前失败的 IP 列表
